@@ -24,6 +24,7 @@ function maximizeServers(serverCapacities) {
                 if (b >= a + c) {
                     best = Math.max(best, a + b + c);
                 }
+                best = Math.max(best, b + Math.min(a + c, b));
             }
         }
     }
