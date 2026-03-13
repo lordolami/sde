@@ -1,0 +1,28 @@
+function maximizeServers(serverCapacities) {
+    const freq = new Map();
+    for (const c of serverCapacities) {
+        freq.set(c, (freq.get(c) || 0) + 1);
+    }
+
+    const vals = [...freq.keys()].sort((a, b) => a - b);
+    let best = 0;
+
+    for (let i = 0; i < vals.length; i++) {
+        const a = freq.get(vals[i]);
+        best = Math.max(best, a);
+
+        if (i + 1 < vals.length && vals[i + 1] === vals[i] + 1) {
+            const b = freq.get(vals[i + 1]);
+            best = Math.max(best, a + b);
+
+            if (i + 2 < vals.length && vals[i + 2] === vals[i] + 2) {
+                const c = freq.get(vals[i + 2]);
+                if (b >= a + c) {
+                    best = Math.max(best, a + b + c);
+                }
+            }
+        }
+    }
+
+    return best;
+}
