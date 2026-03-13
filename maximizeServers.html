@@ -9,21 +9,30 @@ function maximizeServers(serverCapacities) {
     }
 
     const vals = [...freq.keys()].sort((a, b) => a - b);
+    const n = vals.length;
     let best = 0;
 
-    for (let i = 0; i < vals.length; i++) {
-        const a = freq.get(vals[i]);
-        best = Math.max(best, a);
+    const get = (v) => freq.get(v) || 0;
 
-        if (i + 1 < vals.length && vals[i + 1] === vals[i] + 1) {
-            const b = freq.get(vals[i + 1]);
-            best = Math.max(best, a + b);
+    for (let i = 0; i < n; i++) {
+        const v = vals[i];
+        // single value
+        best = Math.max(best, get(v));
 
-            if (i + 2 < vals.length && vals[i + 2] === vals[i] + 2) {
-                const c = freq.get(vals[i + 2]);
-                if (b >= a + c) {
-                    best = Math.max(best, a + b + c);
-                }
+        // two consecutive
+        if (i + 1 < n && vals[i+1] === v + 1) {
+            best = Math.max(best, get(v) + get(v+1));
+        }
+
+        // three consecutive: v, v+1, v+2
+        // need count(v+1) >= count(v) + count(v+2) for all to be valid
+        // otherwise take min subset: b + min(a+c, b)
+        if (i + 1 < n && vals[i+1] === v+1 && i + 2 < n && vals[i+2] === v+2) {
+            const a = get(v), b = get(v+1), c = get(v+2);
+            if (b >= a + c) {
+                best = Math.max(best, a + b + c);
+            } else {
+                // take all of b, and as many a+c as b allows
                 best = Math.max(best, b + Math.min(a + c, b));
             }
         }
